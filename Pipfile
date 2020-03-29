@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+npyscreen = "*"
+python-socketio = {extras = ["client"],version = "*"}
+numpy = "*"
+timebomb-client = {path = ".",editable = true}
+
+[requires]
+python_version = "3.7"
