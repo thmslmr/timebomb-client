@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 with open("./README.md", encoding="utf-8") as f:
     LONG_DESC = "\n" + f.read()
@@ -17,7 +17,7 @@ CLASSIFIERS = [
 
 setup(
     name="timebomb-client",
-    version="0.1.0",
+    version="0.3.0",
     description="Time Bomb.",
     long_description=LONG_DESC,
     long_description_content_type="text/markdown",
@@ -29,7 +29,7 @@ setup(
     python_requires=">=3.7.0",
     install_requires=["npyscreen", "python-socketio[client]", "numpy"],
     extras_require={},
-    packages=find_packages(),
+    packages=find_namespace_packages(),
     entry_points={"console_scripts": ["timebomb=timebomb.cli:main"]},
     include_package_data=True,
 )
