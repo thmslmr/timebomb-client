@@ -17,7 +17,7 @@ CLASSIFIERS = [
 
 setup(
     name="timebomb-client",
-    version="0.3.0",
+    version="0.3.1",
     description="Time Bomb.",
     long_description=LONG_DESC,
     long_description_content_type="text/markdown",
@@ -27,7 +27,7 @@ setup(
     license="MIT",
     classifiers=CLASSIFIERS,
     python_requires=">=3.7.0",
-    install_requires=["npyscreen", "python-socketio[client]", "numpy"],
+    install_requires=["npyscreen", "python-socketio[client]"],
     extras_require={},
     packages=find_namespace_packages(),
     entry_points={"console_scripts": ["timebomb=timebomb.cli:main"]},

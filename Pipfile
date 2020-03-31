@@ -8,7 +8,6 @@ verify_ssl = true
 [packages]
 npyscreen = "*"
 python-socketio = {extras = ["client"],version = "*"}
-numpy = "*"
 timebomb-client = {path = ".",editable = true}
 
 [requires]

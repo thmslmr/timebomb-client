@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def card_view(value: str) -> str:
     return "┌───┐\n│ {} │\n└───┘".format(value)
 
