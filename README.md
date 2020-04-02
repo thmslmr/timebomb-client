@@ -10,7 +10,7 @@ Just enough to connect a [timebomb-server](https://github.com/thmslmr/timebomb-s
 Dependencies
 ---
 
-`timebomb-client` supports Python 3.7.
+`timebomb-client` supports Python 3.6+.
 
 Installation requires [python-socketio](https://github.com/miguelgrinberg/python-socketio) and [npyscreen](https://github.com/npcole/npyscreen).
 
