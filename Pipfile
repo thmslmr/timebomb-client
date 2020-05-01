@@ -4,11 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 
 [packages]
 npyscreen = "*"
-python-socketio = {extras = ["client"],version = "*"}
-timebomb-client = {path = ".",editable = true}
+python-socketio = {version = "*",extras = ["client"]}
+timebomb-client = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
