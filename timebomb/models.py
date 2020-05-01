@@ -138,3 +138,10 @@ class GameState:
 
         self.me = new_me
         return new_me
+
+    def reset(self):
+        """Reset state."""
+        self.messages = []
+        self.room = None
+        self.me = None
+        self.notification = None

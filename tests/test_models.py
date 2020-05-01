@@ -145,3 +145,19 @@ def test_GameState_update_me():
     player = state.update_me({"hand": ("A", "A", "B", "A")})
     assert state.me is player and player.name == "player1" and player.id == "id1"
     assert player.hand == ("A", "A", "B", "A")
+
+
+def test_GameState_reset():
+    state = models.GameState()
+
+    assert isinstance(state.messages, list) and not state.messages
+    assert state.room is None and state.me is None and state.notification is None
+
+    state.messages = ["m1", "m2"]
+    state.room = "Room"
+    state.me = "Me"
+    state.notification = "Notification"
+
+    state.reset()
+    assert isinstance(state.messages, list) and not state.messages
+    assert state.room is None and state.me is None and state.notification is None
