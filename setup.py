@@ -1,5 +1,5 @@
 from timebomb import __VERSION__, __DESCRIPTION__
-from setuptools import setup, find_namespace_packages
+from setuptools import setup, find_packages
 
 with open("./README.md", encoding="utf-8") as f:
     LONG_DESC = "\n" + f.read()
@@ -32,7 +32,7 @@ setup(
     python_requires=">=3.6",
     install_requires=["npyscreen", "python-socketio[client]"],
     extras_require={},
-    packages=find_namespace_packages(),
+    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     entry_points={"console_scripts": ["timebomb=timebomb.cli:main"]},
     include_package_data=True,
 )
