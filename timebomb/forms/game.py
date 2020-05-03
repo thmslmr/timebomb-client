@@ -13,9 +13,12 @@ class InputBox(npyscreen.BoxTitle):
 
 
 class GameForm(npyscreen.ActionFormMinimal):
+    """Main form used during game."""
+
     OK_BUTTON_TEXT = "QUIT"
 
     def create(self):
+        """Create widgets."""
         self.keypress_timeout = 1
         self.name = "Time Bomb"
 
@@ -95,6 +98,7 @@ class GameForm(npyscreen.ActionFormMinimal):
         }
 
     def send_message(self, widget):
+        """Send message and clear input."""
         message = self.widgets["input"].value.strip()
         if not message:
             return
@@ -105,87 +109,74 @@ class GameForm(npyscreen.ActionFormMinimal):
         self.widgets["input"].update()
 
     def cut_pressed(self):
-        me_state = self.parentApp.state["me"]
-        room_state = self.parentApp.state["room"]
+        """Display cut form when hitting cut button."""
+        me_state = self.parentApp.state.me
+        room_state = self.parentApp.state.room
 
-        if room_state["cutter"].get("id") == me_state.get("id"):
+        if room_state.cutter.id == me_state.id:
             self.parentApp.switchForm("CUT")
 
     def while_waiting(self):
+        """Update chat, self infos and room infos."""
         self.process_chat_message()
         self.process_room_state()
         self.process_player_state()
         self.display()
 
     def process_room_state(self):
-        room_state = self.parentApp.state["room"]
-        players = room_state.get("players", [])
+        """Display players and room cards."""
+        room_state = self.parentApp.state.room
+        players = room_state.players
 
         player_names = []
         for player in players:
-            if room_state["cutter"]["id"] == player["id"]:
-                player_names.append(player["name"] + " [cut]")
+            if room_state.cutter.id == player.id:
+                player_names.append(f"{player.name} [cut]")
             else:
-                player_names.append(player["name"])
+                player_names.append(player.name)
 
         self.widgets["players"].name = f"Players [{len(players)}]"
         self.widgets["players"].values = player_names
 
-        self.widgets["cards_found"].value = utils.summary_deck(
-            room_state.get("cards_found")
-        )
-        self.widgets["cards_left"].value = utils.summary_deck(
-            room_state.get("cards_left")
-        )
+        self.widgets["cards_found"].value = utils.summary_deck(room_state.cards_found)
+        self.widgets["cards_left"].value = utils.summary_deck(room_state.cards_left)
 
-        nb_found = sum(room_state.get("cards_found", {}).values())
-        nb_left = sum(room_state.get("cards_left", {}).values())
+        nb_found = sum(room_state.cards_found.values())
+        nb_left = sum(room_state.cards_left.values())
+        nb_players = len(players)
 
-        complete_str = (
-            "│"
-            + ("█" * len(players) + "│") * (nb_found // len(players))
-            + "█" * (nb_found % len(players))
-        )
-        left_str = (
-            "░" * (nb_left % len(players))
-            + ("│" if nb_left % len(players) else "")
-            + ("░" * len(players) + "│") * (nb_left // len(players))
-        )
-
-        self.widgets["round"].value = complete_str + left_str
+        self.widgets["round"].value = utils.round_bar(nb_players, nb_found, nb_left)
 
     def process_player_state(self):
-        me_state = self.parentApp.state["me"]
-        room_state = self.parentApp.state["room"]
+        """Display deck and change style."""
+        me_state = self.parentApp.state.me
+        room_state = self.parentApp.state.room
 
-        self.widgets["cards_user"].value = utils.list_deck(me_state.get("hand"))
+        self.widgets["cards_user"].value = utils.list_deck(me_state.hand)
 
-        color = "DANGER" if me_state.get("team") == "Moriarty" else "NO_EDIT"
+        color = "DANGER" if me_state.team == "Moriarty" else "NO_EDIT"
 
         self.color = color
-        self.widgets["cut"].hidden = room_state["cutter"].get("id") != me_state.get(
-            "id"
-        )
+        self.widgets["cut"].hidden = room_state.cutter.id != me_state.id
 
         for widget in self.widgets.values():
             widget.color = color
             widget.labelColor = color
 
-        self.name = f"Time Bomb ── {me_state['name']} ── Team {me_state['team']}"
+        self.name = f"Time Bomb ── {me_state.name} ── Team {me_state.team}"
 
     def process_chat_message(self):
-        messages = self.parentApp.state["messages"]
+        """Display messages in chat."""
+        messages = self.parentApp.state.messages
 
         if not messages:
             return
 
         max_message = self.widgets["message"].height - 2
         self.widgets["message"].value = "\n".join(
-            [
-                message["player"] + ":\t" + message["message"]
-                for message in messages[-max_message:]
-            ]
+            [str(message) for message in messages[-max_message:]]
         )
 
     def on_ok(self):
-        self.parentApp.exit()
+        """Exit game."""
+        self.parentApp.exit()  # TODO: add confirmation form

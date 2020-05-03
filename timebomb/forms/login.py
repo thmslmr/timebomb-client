@@ -1,10 +1,10 @@
 import npyscreen
 
 
-ACSII = """\
+ACSII = r"""
   _____ _             ___            _
  |_   _(_)_ __  ___  | _ ) ___ _ __ | |__
-   | | | | '  \/ -_) | _ \/ _ \ '  \| '_ \\
+   | | | | '  \/ -_) | _ \/ _ \ '  \| '_ \
    |_| |_|_|_|_\___| |___/\___/_|_|_|_.__/
 """
 
@@ -16,6 +16,8 @@ Otherwise, you will be added to a random room.
 
 
 class LoginForm(npyscreen.ActionForm):
+    """Log to start a new game."""
+
     CANCEL_BUTTON_BR_OFFSET = (2, 14)
     OK_BUTTON_TEXT = "LOGIN"
     CANCEL_BUTTON_TEXT = "QUIT"
@@ -24,6 +26,7 @@ class LoginForm(npyscreen.ActionForm):
     DEFAULT_COLUMNS = 72
 
     def create(self):
+        """Display infos and create widgets."""
         self.name = "Welcome"
         self.keypress_timeout = 1
         self.center_on_display()
@@ -41,6 +44,7 @@ class LoginForm(npyscreen.ActionForm):
         }
 
     def on_ok(self):
+        """Login if username is defined."""
         username = self.widgets["username"].value.strip()
         if not username:
             return
@@ -49,8 +53,10 @@ class LoginForm(npyscreen.ActionForm):
         self.parentApp.sio.login(username, roomname)
 
     def on_cancel(self):
+        """Exit if cancel."""
         self.parentApp.exit()
 
     def while_waiting(self):
-        if self.parentApp.state.get("room"):
+        """Wait for room to exist and switch to wait form."""
+        if self.parentApp.state.room:
             self.parentApp.switchForm("WAIT")

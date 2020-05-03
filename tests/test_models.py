@@ -19,12 +19,13 @@ def test_Player():
     assert player.team is None
     assert player.hand is None
 
-    player = models.Player("name", "id", "team", ("A", "B"))
+    player = models.Player("name", "id", "team", ("A", "B"), "roomid")
 
     assert player.name == "name"
     assert player.id == "id"
     assert player.team == "team"
     assert player.hand == ("A", "B")
+    assert player.roomId == "roomid"
 
 
 def test_Message():
@@ -44,7 +45,7 @@ def test_Room():
     assert room.name == "room" and room.id == "room_id"
     assert len(room.players) == 1 and room.players[0] is player
 
-    assert room.cutter == "" and room.winning_team is None and room.status == ""
+    assert room.cutter is None and room.winning_team is None and room.status == ""
 
     assert isinstance(room.cards_found, dict) and isinstance(room.cards_left, dict)
     assert not room.cards_found and not room.cards_left
@@ -118,12 +119,17 @@ def test_GameState_update_room():
     assert len(room.players) == 1
     assert room.players[0].name == "player1" and room.players[0].id == "id1"
 
-    new_data = {"name": "newname"}
+    new_data = {"name": "newname", "cutter": {"name": "cutter", "id": "cutterid"}}
     room = state.update_room(new_data)
 
     assert state.room is room and room.name == "newname" and room.id == "roomid"
     assert len(room.players) == 1
     assert room.players[0].name == "player1" and room.players[0].id == "id1"
+    assert (
+        isinstance(room.cutter, models.Player)
+        and room.cutter.id == "cutterid"
+        and room.cutter.name == "cutter"
+    )
 
     new_data = {
         "players": [{"name": "player1", "id": "id1"}, {"name": "player2", "id": "id2"}]

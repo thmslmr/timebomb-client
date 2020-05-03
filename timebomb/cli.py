@@ -13,5 +13,6 @@ def main():
     )
     args = parser.parse_args()
 
-    TA = App(host=args.host)
+    TA = App()
+    TA.connect_server(args.host)
     TA.run()

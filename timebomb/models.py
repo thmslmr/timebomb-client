@@ -22,6 +22,7 @@ class Player:
     id: str
     team: str = None
     hand: Tuple[str] = None
+    roomId: str = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -44,7 +45,7 @@ class Room:
     id: str
     players: Tuple[Player]
 
-    cutter: str = ""
+    cutter: Player = None
     status: str = ""
     winning_team: Tuple[str] = None
 
@@ -110,6 +111,11 @@ class GameState:
         """
         # Separate treatment for players
         players_infos = data.pop("players", [])
+        cutter = data.pop("cutter", {})
+        if cutter:
+            cutter = Player(**cutter)
+            data["cutter"] = cutter
+
         if players_infos:
             players = [Player(**infos) for infos in players_infos]
             data["players"] = players

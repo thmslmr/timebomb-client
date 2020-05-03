@@ -1,48 +1,45 @@
 import socketio
-import copy
-
-INIT_STATE = {"messages": [], "room": {}, "me": {}, "notification": {}, "end": {}}
 
 
 class SocketClient(socketio.Client):
-    def __init__(self, *args, **kwargs):
+    """Socket Client to interact with timebomb server."""
+
+    def __init__(self, state, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.state = copy.deepcopy(INIT_STATE)
+        self.on("chat", state.new_message)
+        self.on("room", state.update_room)
+        self.on("player", state.update_me)
 
-        self.on("chat", self.chat_handler)
-        self.on("room", self.room_handler)
-        self.on("player", self.player_handler)
-        self.on("end", self.end_handler)
-        self.on("notify", self.notif_handler)
+        # TODO: Change server side to handle that
+        self.on("end", lambda data: state.update_room({**data, "status": "ENDED"}))
+        self.on("notify", state.new_notification)
 
-    def chat_handler(self, data):
-        self.state["messages"].append(data)
-        self.state["messages"] = self.state["messages"][-100:]
+    def login(self, username: str, roomname: str = None):
+        """Emit socket message to login.
 
-    def room_handler(self, data):
-        self.state["room"].update(data)
-
-    def player_handler(self, data):
-        self.state["me"].update(data)
-
-    def end_handler(self, data):
-        self.state["end"] = data
-
-    def notif_handler(self, data):
-        self.state["notification"] = data
-
-    def init_state(self):
-        self.state.update(INIT_STATE)
-
-    def login(self, username, roomname):
+        Args:
+            username (str): The user name.
+            roomname (str): The room name. Default None.
+        """
         self.emit("login", {"username": username, "roomname": roomname})
 
     def start(self):
+        """Emit socket message to start the game."""
         self.emit("start")
 
     def cut(self, target_id):
+        """Emit socket message to randomly cut a card.
+
+        Args:
+            target_id (str): The player id where to cut.
+        """
         self.emit("cut", {"target": target_id})
 
     def send_message(self, message):
+        """Emit socket message for chat.
+
+        Args:
+            message (str): The message to send.
+        """
         self.emit("chat", {"message": message})
